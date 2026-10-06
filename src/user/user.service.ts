@@ -17,7 +17,7 @@ export class UserService {
         return user;
     }
 
-    async createUser(data: Prisma.UserCreateInput): Promise<User | Error> {
+    async createUser(data: Prisma.UserCreateInput): Promise<User> {
         const email = data.email;
         const userExists = await this.prisma.user.findUnique({ where: { email } });
 
@@ -29,6 +29,20 @@ export class UserService {
         const hash = await bcrypt.hash(data.password, salt);
 
         return this.prisma.user.create({data: { ...data, password: hash }});
+    }
+
+    async updateUser(params: {
+        data: Prisma.UserUpdateInput,
+        where: Prisma.UserWhereUniqueInput
+    }): Promise<User> {
+        const where = params.where;
+        const user = await this.prisma.user.findUnique({ where });
+
+        if (!user) {
+            throw new NotFoundException({ message: 'User not found' });
+        }
+
+        return this.prisma.user.update(params);
     }
 
     async deleteUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
