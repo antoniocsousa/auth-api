@@ -1,12 +1,14 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service.js';
 import { Prisma } from '../generated/prisma/client.js';
+import { AuthGuard } from '../auth/auth.guard.js';
 
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('/:id')
+  @UseGuards(AuthGuard)
   async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.userService.user({ id });
   }
