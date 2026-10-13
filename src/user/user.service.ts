@@ -10,6 +10,18 @@ export class UserService {
         return this.prisma.user.findUnique({ where });
     }
 
+    async me(where: Prisma.UserWhereUniqueInput) {
+        const user = await this.prisma.user.findUnique({ where });
+
+        if (!user) {
+            throw new NotFoundException('User not found');
+        }
+
+        const { password, ...userWithoutPassword } = user;
+
+        return userWithoutPassword;
+    }
+
     async createUser(data: Prisma.UserCreateInput): Promise<User> {
         return this.prisma.user.create({ data });
     }

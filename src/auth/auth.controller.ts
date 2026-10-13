@@ -27,6 +27,8 @@ export class AuthController {
 
     this.adapterHost.httpAdapter.setCookie(res, 'refreshToken', response.refreshToken, {
       httpOnly: true,
+      secure: false,
+      maxAge: 60*60*24*7,
     })
 
     return { accessToken: response.accessToken }
